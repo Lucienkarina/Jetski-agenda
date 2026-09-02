@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Agenda Jet Skis</title>
+<meta name="description" content="Agenda compartilhada para reserva de jet skis entre proprietários." />
+<meta name="theme-color" content="#0B3B45" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="JetAgenda" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ONBOARDING: primeiro acesso -->
+<div id="onboarding-screen" class="onboard hidden">
+  <div class="mark">🌊</div>
+  <h1>Bem-vindo!</h1>
+  <p>Antes de começar, diga como os outros proprietários vão te ver na agenda.</p>
+  <input id="onboard-name" type="text" placeholder="Seu nome" maxlength="40" autocomplete="name" />
+  <button id="onboard-save" class="btn btn-primary">Salvar e entrar</button>
+  <p id="onboard-error" style="color:#FFD3D3;font-size:.8rem;margin-top:10px;min-height:1em"></p>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="topbar-row">
+      <div class="brand">
+        <div class="brand-mark">🛥️</div>
+        <div class="brand-text">
+          <h1>Agenda Jet Skis</h1>
+          <span id="fleet-sub">carregando...</span>
+        </div>
+      </div>
+      <button id="avatar-btn" class="avatar-btn" aria-label="Meu perfil">?</button>
+    </div>
+    <div id="conn-banner" class="conn-banner">
+      <span class="conn-dot"></span>
+      <span id="conn-text">Conectado — agenda em tempo real</span>
+    </div>
+    <div class="wave"></div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="screen-home" class="screen active">
+      <div class="section-title">
+        <h2>Jet skis</h2>
+        <span class="muted" id="home-count"></span>
+      </div>
+      <div id="jetski-grid" class="jetski-grid">
+        <div class="skeleton"></div>
+      </div>
+    </section>
+
+    <!-- DETAIL / AGENDA DO JET SKI -->
+    <section id="screen-detail" class="screen">
+      <div class="detail-header">
+        <button class="back-btn" id="detail-back">←</button>
+        <div>
+          <h2 id="detail-title">Jet Ski</h2>
+          <div class="muted" id="detail-owner" style="font-size:.82rem;color:var(--ink-soft)"></div>
+        </div>
+      </div>
+
+      <div class="date-nav">
+        <button id="detail-prev-day" aria-label="Dia anterior">←</button>
+        <div class="date-label">
+          <span id="detail-date-weekday">—</span>
+          <small id="detail-date-full">—</small>
+        </div>
+        <button id="detail-next-day" aria-label="Dia seguinte">→</button>
+      </div>
+
+      <div id="detail-status-banner" style="display:none"></div>
+
+      <div id="detail-slots" class="slot-list"></div>
+    </section>
+
+    <!-- AGENDA GERAL -->
+    <section id="screen-overview" class="screen">
+      <div class="date-nav">
+        <button id="overview-prev-day">←</button>
+        <div class="date-label">
+          <span id="overview-date-weekday">—</span>
+          <small id="overview-date-full">—</small>
+        </div>
+        <button id="overview-next-day">→</button>
+      </div>
+      <div id="overview-list"></div>
+    </section>
+
+    <!-- PERFIL / ADMIN -->
+    <section id="screen-profile" class="screen">
+      <div class="section-title"><h2>Meu perfil</h2></div>
+
+      <div class="jetski-card" style="padding:16px;margin-bottom:18px">
+        <div class="field">
+          <label>Nome</label>
+          <input id="profile-name" type="text" maxlength="40" />
+        </div>
+        <button id="profile-save" class="btn btn-primary btn-block">Salvar alterações</button>
+        <p id="profile-msg" style="font-size:.8rem;color:var(--ink-soft);margin-top:8px;min-height:1em"></p>
+      </div>
+
+      <div class="section-title"><h2>Minhas reservas</h2></div>
+      <div id="my-bookings"></div>
+
+      <div id="admin-panel" class="hidden">
+        <div class="section-title" style="margin-top:26px"><h2>Painel do administrador</h2></div>
+
+        <div class="jetski-card" style="padding:16px;margin-bottom:16px">
+          <h3 style="font-size:.98rem;margin-bottom:10px">Jet skis</h3>
+          <div id="admin-jetski-list"></div>
+          <button id="admin-add-jetski" class="btn btn-outline btn-block" style="margin-top:8px">+ Novo jet ski</button>
+        </div>
+
+        <div class="jetski-card" style="padding:16px;margin-bottom:16px">
+          <h3 style="font-size:.98rem;margin-bottom:10px">Proprietários (<span id="admin-owner-count">0</span>/10)</h3>
+          <div id="admin-owner-list"></div>
+        </div>
+
+        <div class="jetski-card" style="padding:16px;margin-bottom:16px">
+          <h3 style="font-size:.98rem;margin-bottom:10px">Horário de funcionamento</h3>
+          <div class="field-row">
+            <div class="field"><label>Abertura</label><input id="settings-open" type="time" /></div>
+            <div class="field"><label>Fechamento</label><input id="settings-close" type="time" /></div>
+          </div>
+          <div class="field">
+            <label>Duração padrão do horário</label>
+            <select id="settings-duration">
+              <option value="30">30 minutos</option>
+              <option value="60">1 hora</option>
+              <option value="90">1h30</option>
+              <option value="120">2 horas</option>
+            </select>
+          </div>
+          <button id="settings-save" class="btn btn-primary btn-block">Salvar configuração</button>
+        </div>
+
+        <div class="jetski-card" style="padding:16px;margin-bottom:16px">
+          <h3 style="font-size:.98rem;margin-bottom:10px">Bloquear horário (manutenção etc.)</h3>
+          <button id="admin-add-block" class="btn btn-outline btn-block">+ Bloquear horário</button>
+        </div>
+
+        <div class="jetski-card" style="padding:16px;margin-bottom:16px">
+          <h3 style="font-size:.98rem;margin-bottom:10px">Todas as reservas ativas</h3>
+          <div id="admin-all-bookings"></div>
+        </div>
+      </div>
+
+      <button id="logout-hint" class="btn btn-ghost btn-block" style="margin-top:22px">Sair (apenas neste dispositivo)</button>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-nav="home"><span class="ic">🏝️</span>Início</button>
+    <button class="nav-btn" data-nav="overview"><span class="ic">🗓️</span>Agenda geral</button>
+    <button class="nav-btn" data-nav="profile"><span class="ic">👤</span>Perfil</button>
+  </nav>
+</div>
+
+<!-- MODAL: novo agendamento -->
+<div id="modal-booking" class="modal-backdrop hidden">
+  <div class="modal-sheet">
+    <h2>Novo agendamento</h2>
+    <div class="summary-box">
+      <div><span class="label">Jet ski</span><span id="bk-jetski">—</span></div>
+      <div><span class="label">Data</span><span id="bk-date">—</span></div>
+      <div><span class="label">Horário</span><span id="bk-time">—</span></div>
+      <div><span class="label">Agendado por</span><span id="bk-user">—</span></div>
+    </div>
+    <div class="modal-actions">
+      <button id="bk-cancel" class="btn btn-ghost btn-block">Cancelar</button>
+      <button id="bk-confirm" class="btn btn-primary btn-block">Confirmar agendamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: cancelar reserva -->
+<div id="modal-cancel" class="modal-backdrop hidden">
+  <div class="modal-sheet">
+    <h2>Cancelar reserva?</h2>
+    <div class="summary-box">
+      <div><span class="label">Jet ski</span><span id="ck-jetski">—</span></div>
+      <div><span class="label">Data</span><span id="ck-date">—</span></div>
+      <div><span class="label">Horário</span><span id="ck-time">—</span></div>
+    </div>
+    <div class="modal-actions">
+      <button id="ck-back" class="btn btn-ghost btn-block">Voltar</button>
+      <button id="ck-confirm" class="btn btn-danger btn-block">Cancelar reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: novo/editar jet ski (admin) -->
+<div id="modal-jetski" class="modal-backdrop hidden">
+  <div class="modal-sheet">
+    <h2 id="jk-title">Novo jet ski</h2>
+    <div class="field">
+      <label>Nome / identificação</label>
+      <input id="jk-name" type="text" placeholder="Jet Ski 01" maxlength="40" />
+    </div>
+    <div class="field">
+      <label>Proprietário</label>
+      <select id="jk-owner"></select>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select id="jk-status">
+        <option value="available">🟢 Disponível</option>
+        <option value="unavailable">⚫ Indisponível</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Foto</label>
+      <input id="jk-photo" type="file" accept="image/*" />
+    </div>
+    <div class="modal-actions">
+      <button id="jk-cancel" class="btn btn-ghost btn-block">Cancelar</button>
+      <button id="jk-save" class="btn btn-primary btn-block">Salvar</button>
+    </div>
+    <button id="jk-remove" class="btn btn-danger btn-block hidden" style="margin-top:10px">Remover jet ski</button>
+  </div>
+</div>
+
+<!-- MODAL: bloquear horário (admin) -->
+<div id="modal-block" class="modal-backdrop hidden">
+  <div class="modal-sheet">
+    <h2>Bloquear horário</h2>
+    <div class="field">
+      <label>Jet ski</label>
+      <select id="bl-jetski"></select>
+    </div>
+    <div class="field">
+      <label>Data</label>
+      <input id="bl-date" type="date" />
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Início</label><input id="bl-start" type="time" /></div>
+      <div class="field"><label>Fim</label><input id="bl-end" type="time" /></div>
+    </div>
+    <div class="field">
+      <label>Motivo</label>
+      <input id="bl-reason" type="text" placeholder="Manutenção" maxlength="60" />
+    </div>
+    <div class="modal-actions">
+      <button id="bl-cancel" class="btn btn-ghost btn-block">Cancelar</button>
+      <button id="bl-confirm" class="btn btn-primary btn-block">Bloquear</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
