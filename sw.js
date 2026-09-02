@@ -3,21 +3,24 @@
 // reservas sempre dependem da rede, para nunca gerar conflito de dados
 // (ver seção 31 do briefing).
 
-const CACHE_NAME = "jetski-agenda-shell-v1";
+const CACHE_NAME = "jetski-agenda-shell-v2";
 
 const SHELL_FILES = [
   "./",
   "./index.html",
-  "./css/style.css",
-  "./js/config.js",
-  "./js/supabaseClient.js",
-  "./js/state.js",
-  "./js/api.js",
-  "./js/ui.js",
-  "./js/app.js",
+  "./style.css",
+  "./config.js",
+  "./supabaseClient.js",
+  "./state.js",
+  "./api.js",
+  "./ui.js",
+  "./app.js",
   "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./icon-maskable-192.png",
+  "./icon-maskable-512.png",
+  "./apple-touch-icon.png",
   "./offline.html"
 ];
 

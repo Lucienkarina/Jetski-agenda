@@ -54,7 +54,7 @@ atualização em tempo real.
 
 ## 2. Configurar o app com as credenciais do seu banco
 
-Abra `js/config.js` e substitua:
+Abra `config.js` e substitua:
 
 ```js
 export const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
@@ -71,11 +71,11 @@ direto pelo `file://`. Duas opções simples:
 
 ```bash
 # opção 1: Python
-cd jetski-pwa
+cd Jetski-agenda
 python3 -m http.server 8080
 
 # opção 2: Node
-npx serve jetski-pwa
+npx serve .
 ```
 
 Depois acesse `http://localhost:8080` no navegador.
@@ -124,7 +124,7 @@ Qualquer hospedagem de site estático funciona. Sugestões simples e gratuitas:
 
 **Vercel / Netlify (arrastar e soltar a pasta)**
 1. Crie uma conta gratuita.
-2. Arraste a pasta `jetski-pwa` (com `js/config.js` já preenchido) para o painel.
+2. Arraste a pasta do projeto (com `config.js` já preenchido) para o painel.
 3. Copie o link gerado (ex.: `https://sua-agenda.vercel.app`) e compartilhe com os
    proprietários.
 
@@ -137,8 +137,7 @@ ou "Instalar app" (Android/Chrome) para usar como um aplicativo nativo.
 
 ## 10. Como atualizar o sistema
 
-- **Mudanças de interface/lógica**: edite os arquivos em `js/`, `css/` ou
-  `index.html` e publique novamente (novo deploy). O Service Worker troca a versão do
+- **Mudanças de interface/lógica**: edite os arquivos na raiz do projeto ou em `index.html` e publique novamente (novo deploy). O Service Worker troca a versão do
   cache automaticamente a cada novo deploy (os usuários recebem a atualização na
   próxima vez que abrirem o app com internet).
 - **Mudanças no banco**: edite/adicione comandos SQL e rode no **SQL Editor** do
@@ -150,21 +149,20 @@ ou "Instalar app" (Android/Chrome) para usar como um aplicativo nativo.
 ## Estrutura do projeto
 
 ```
-jetski-pwa/
+Jetski-agenda/
 ├── index.html          # Estrutura de todas as telas
-├── manifest.json        # Configuração do PWA (ícones, nome, cores)
-├── sw.js                 # Service worker (cache do app, nunca da agenda)
-├── offline.html          # Tela mostrada quando não há internet
-├── css/style.css         # Todo o visual (tema praia/mar)
-├── js/
-│   ├── config.js          # Credenciais do Supabase (preencher)
-│   ├── supabaseClient.js  # Conexão + login anônimo
-│   ├── state.js            # Estado do app + utilitários de data/horário
-│   ├── api.js               # Todas as chamadas ao banco (perfis, jet skis, reservas)
-│   ├── ui.js                 # Funções de renderização (HTML dinâmico)
-│   └── app.js                 # Navegação, eventos, tempo real
-├── sql/schema.sql        # Tabelas, RLS, constraint anti-conflito, storage
-└── icons/                 # Ícones do PWA (gerados; troque pelos seus se quiser)
+├── manifest.json       # Configuração do PWA (ícones, nome, cores)
+├── sw.js               # Service worker (cache do app, nunca da agenda)
+├── offline.html        # Tela mostrada quando não há internet
+├── style.css           # Todo o visual (tema praia/mar)
+├── config.js           # Credenciais do Supabase (preencher)
+├── supabaseClient.js   # Conexão + login anônimo
+├── state.js            # Estado do app + utilitários de data/horário
+├── api.js              # Todas as chamadas ao banco (perfis, jet skis, reservas)
+├── ui.js               # Funções de renderização (HTML dinâmico)
+├── app.js              # Navegação, eventos, tempo real
+├── sql/schema.sql      # Tabelas, RLS, constraint anti-conflito, storage
+└── icon-*.png          # Ícones do PWA (gerados; troque pelos seus se quiser)
 ```
 
 ## Checklist de testes (equivalente à seção 32 do briefing)
@@ -190,7 +188,7 @@ Depois de configurar, valide manualmente:
 
 ## Sobre os ícones
 
-Os ícones em `icons/` foram gerados automaticamente com um visual simples (onda +
+Os ícones na raiz foram gerados automaticamente com um visual simples (onda +
 jet ski). Troque pelos arquivos do seu clube/marca quando quiser — basta manter os
 mesmos nomes de arquivo e tamanhos (192×192, 512×512, mais as versões "maskable" e o
 `apple-touch-icon.png` de 180×180).
